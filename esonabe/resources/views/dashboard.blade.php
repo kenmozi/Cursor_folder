@@ -1,155 +1,192 @@
 @extends('layouts.app')
-
 @section('title', __('messages.dashboard'))
+@section('header-actions')
+    <a href="{{ route('contracts.create') }}" class="btn btn-primary btn-sm">
+        <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+        {{ __('messages.add_contract') }}
+    </a>
+@endsection
 
 @section('content')
-<div class="space-y-6">
+<div style="display:flex; flex-direction:column; gap:20px;">
 
     {{-- Welcome banner --}}
-    <div class="bg-gradient-to-r from-blue-800 to-blue-600 rounded-xl p-6 text-white flex items-center justify-between">
-        <div>
-            <h2 class="text-2xl font-bold">{{ __('messages.welcome') }}, {{ Auth::user()->name }} 👋</h2>
-            <p class="text-blue-200 mt-1">{{ now()->translatedFormat('l d F Y') }}</p>
+    <div style="background:linear-gradient(120deg, #1a1a1a 0%, #2E7D32 60%, #1b5e20 100%); border-radius:14px; padding:24px 28px; display:flex; align-items:center; justify-content:space-between; overflow:hidden; position:relative;">
+        <div style="position:absolute; right:-10px; top:-20px; opacity:.08;">
+            <img src="/images/sonabel-logo.svg" style="width:180px; height:auto; filter:invert(1);">
         </div>
-        <div class="text-5xl opacity-30">⚡</div>
-    </div>
-
-    {{-- Stat cards --}}
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="stat-card">
-            <div class="flex items-center justify-between">
-                <span class="text-sm text-gray-500">{{ __('messages.total_contracts') }}</span>
-                <span class="text-blue-600 bg-blue-50 rounded-lg p-2">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                </span>
-            </div>
-            <div class="text-3xl font-bold text-gray-900">{{ $totalContracts }}</div>
+        <div style="position:relative; z-index:1;">
+            <p style="margin:0 0 4px; font-size:.82rem; color:rgba(255,255,255,.6); letter-spacing:.3px;">{{ now()->isoFormat('dddd D MMMM Y') }}</p>
+            <h2 style="margin:0; font-size:1.5rem; font-weight:800; color:#fff;">
+                {{ __('messages.welcome') }}, {{ Auth::user()->name }}
+            </h2>
+            <p style="margin:6px 0 0; font-size:.83rem; color:rgba(255,255,255,.55);">Bienvenue dans votre espace client e-SONABE</p>
         </div>
-        <div class="stat-card">
-            <div class="flex items-center justify-between">
-                <span class="text-sm text-gray-500">{{ __('messages.total_meters') }}</span>
-                <span class="text-orange-500 bg-orange-50 rounded-lg p-2">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg>
-                </span>
-            </div>
-            <div class="text-3xl font-bold text-gray-900">{{ $totalMeters }}</div>
-        </div>
-        <div class="stat-card">
-            <div class="flex items-center justify-between">
-                <span class="text-sm text-gray-500">{{ __('messages.pending_bills') }}</span>
-                <span class="text-yellow-600 bg-yellow-50 rounded-lg p-2">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                </span>
-            </div>
-            <div class="text-3xl font-bold text-gray-900">{{ $pendingBills->count() }}</div>
-        </div>
-        <div class="stat-card">
-            <div class="flex items-center justify-between">
-                <span class="text-sm text-gray-500">{{ __('messages.total_pending') }}</span>
-                <span class="text-red-500 bg-red-50 rounded-lg p-2">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                </span>
-            </div>
-            <div class="text-3xl font-bold text-gray-900">{{ number_format($totalPending, 0, ',', ' ') }} <span class="text-base font-normal text-gray-400">CFA</span></div>
+        <div style="border:3px solid rgba(255,214,0,.5); border-radius:12px; padding:4px; flex-shrink:0; position:relative; z-index:1;">
+            <img src="/images/sonabel-logo.svg" alt="SONABEL" style="width:76px; height:auto; background:#fff; border-radius:8px; padding:4px; display:block;">
         </div>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    {{-- KPI cards --}}
+    <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:14px;">
+
+        <div class="stat-card">
+            <div style="display:flex; align-items:center; justify-content:space-between;">
+                <span style="font-size:.78rem; color:#6b7280; font-weight:600;">{{ __('messages.total_contracts') }}</span>
+                <div style="width:36px; height:36px; background:#fef2f2; border-radius:9px; display:flex; align-items:center; justify-content:center;">
+                    <svg style="width:18px;height:18px;color:#D32F2F;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                </div>
+            </div>
+            <div style="font-size:2rem; font-weight:800; color:#111; line-height:1.1;">{{ $totalContracts }}</div>
+            <div style="font-size:.73rem; color:#9ca3af;">contrats actifs</div>
+        </div>
+
+        <div class="stat-card">
+            <div style="display:flex; align-items:center; justify-content:space-between;">
+                <span style="font-size:.78rem; color:#6b7280; font-weight:600;">{{ __('messages.total_meters') }}</span>
+                <div style="width:36px; height:36px; background:#fff7ed; border-radius:9px; display:flex; align-items:center; justify-content:center;">
+                    <svg style="width:18px;height:18px;color:#ea580c;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                </div>
+            </div>
+            <div style="font-size:2rem; font-weight:800; color:#111; line-height:1.1;">{{ $totalMeters }}</div>
+            <div style="font-size:.73rem; color:#9ca3af;">compteurs enregistrés</div>
+        </div>
+
+        <div class="stat-card">
+            <div style="display:flex; align-items:center; justify-content:space-between;">
+                <span style="font-size:.78rem; color:#6b7280; font-weight:600;">{{ __('messages.pending_bills') }}</span>
+                <div style="width:36px; height:36px; background:#fefce8; border-radius:9px; display:flex; align-items:center; justify-content:center;">
+                    <svg style="width:18px;height:18px;color:#ca8a04;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                </div>
+            </div>
+            <div style="font-size:2rem; font-weight:800; color:#111; line-height:1.1;">{{ $pendingBills->count() }}</div>
+            <div style="font-size:.73rem; color:#9ca3af;">factures en attente</div>
+        </div>
+
+        <div class="stat-card">
+            <div style="display:flex; align-items:center; justify-content:space-between;">
+                <span style="font-size:.78rem; color:#6b7280; font-weight:600;">{{ __('messages.total_pending') }}</span>
+                <div style="width:36px; height:36px; background:#fef2f2; border-radius:9px; display:flex; align-items:center; justify-content:center;">
+                    <svg style="width:18px;height:18px;color:#dc2626;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                </div>
+            </div>
+            <div style="font-size:1.5rem; font-weight:800; color:#111; line-height:1.2;">
+                {{ number_format($totalPending, 0, ',', ' ') }}
+                <span style="font-size:.85rem; font-weight:500; color:#9ca3af;">CFA</span>
+            </div>
+            <div style="font-size:.73rem; color:#9ca3af;">montant impayé</div>
+        </div>
+    </div>
+
+    {{-- Charts row --}}
+    <div style="display:grid; grid-template-columns:1fr 320px; gap:16px;">
+
         {{-- Consumption chart --}}
-        <div class="card lg:col-span-2">
+        <div class="card">
             <div class="card-header">
-                <h3 class="font-semibold text-gray-800">{{ __('messages.consumption_30d') }}</h3>
-                <span class="text-xs text-gray-400">kWh/jour</span>
+                <h3>{{ __('messages.consumption_30d') }}</h3>
+                <span style="font-size:.73rem; color:#9ca3af; background:#f9f9f9; padding:3px 9px; border-radius:20px; border:1px solid #ebebeb;">kWh / jour</span>
             </div>
             <div class="card-body">
                 @if(array_sum($chartData) > 0)
-                    <canvas id="consumptionChart" height="200"></canvas>
+                    <canvas id="consumptionChart" style="max-height:220px;"></canvas>
                 @else
-                    <div class="flex flex-col items-center justify-center py-12 text-gray-400">
-                        <svg class="w-12 h-12 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-                        <p>{{ __('messages.no_data') }}</p>
+                    <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; padding:48px 0; color:#d1d5db;">
+                        <svg style="width:48px;height:48px;margin-bottom:12px;" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                        <p style="margin:0; font-size:.85rem;">{{ __('messages.no_data') }}</p>
                     </div>
                 @endif
             </div>
         </div>
 
-        {{-- CashPower balances --}}
+        {{-- CashPower panel --}}
         <div class="card">
             <div class="card-header">
-                <h3 class="font-semibold text-gray-800">⚡ Cash-Power</h3>
-                <a href="{{ route('cashpower.index') }}" class="text-xs text-blue-600 hover:underline">{{ __('messages.view') }}</a>
+                <h3>⚡ Cash-Power</h3>
+                <a href="{{ route('cashpower.index') }}" class="btn btn-secondary btn-sm" style="font-size:.72rem;">{{ __('messages.view') }}</a>
             </div>
-            <div class="card-body space-y-4">
+            <div class="card-body" style="display:flex; flex-direction:column; gap:12px;">
                 @forelse($cashpowerMeters as $meter)
-                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                        <div>
-                            <div class="text-xs text-gray-500">{{ $meter->meter_number }}</div>
-                            <div class="text-sm font-medium text-gray-800">{{ $meter->contract->name }}</div>
-                        </div>
-                        <div class="text-right">
-                            <div class="font-bold text-lg {{ $meter->balance_color_class }}">
-                                {{ number_format($meter->cashpower_balance_kwh, 1) }} kWh
+                    <div style="background:#fafafa; border:1px solid #f0f0f0; border-radius:10px; padding:12px 14px;">
+                        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">
+                            <div>
+                                <div style="font-size:.7rem; color:#9ca3af; font-family:monospace;">{{ $meter->meter_number }}</div>
+                                <div style="font-size:.84rem; font-weight:700; color:#111;">{{ $meter->contract->name }}</div>
                             </div>
-                            @if($meter->balance_status === 'danger')
-                                <div class="text-xs text-red-500 font-medium">⚠ {{ __('messages.balance_low') }}</div>
-                            @elseif($meter->balance_status === 'warning')
-                                <div class="text-xs text-orange-500 font-medium">⚠ {{ __('messages.balance_medium') }}</div>
-                            @else
-                                <div class="text-xs text-green-500 font-medium">✓ {{ __('messages.balance_high') }}</div>
-                            @endif
+                            <div style="text-align:right;">
+                                @php
+                                    $balColor = match($meter->balance_status) {
+                                        'danger'  => '#dc2626',
+                                        'warning' => '#d97706',
+                                        default   => '#16a34a',
+                                    };
+                                @endphp
+                                <div style="font-size:1.15rem; font-weight:800; color:{{ $balColor }};">
+                                    {{ number_format($meter->cashpower_balance_kwh, 1) }} kWh
+                                </div>
+                            </div>
+                        </div>
+                        {{-- Balance bar --}}
+                        @php $pct = min(100, ($meter->cashpower_balance_kwh / 100) * 100); @endphp
+                        <div style="height:5px; background:#e5e7eb; border-radius:9999px; overflow:hidden;">
+                            <div style="height:100%; width:{{ $pct }}%; background:{{ $balColor }}; border-radius:9999px; transition:width .4s;"></div>
+                        </div>
+                        <div style="font-size:.7rem; margin-top:5px; font-weight:600; color:{{ $balColor }};">
+                            @if($meter->balance_status === 'danger') ⚠ {{ __('messages.balance_low') }}
+                            @elseif($meter->balance_status === 'warning') ⚠ {{ __('messages.balance_medium') }}
+                            @else ✓ {{ __('messages.balance_high') }} @endif
                         </div>
                     </div>
                 @empty
-                    <p class="text-sm text-gray-400 text-center py-4">{{ __('messages.cashpower_no_meters') }}</p>
+                    <div style="text-align:center; padding:24px 0; color:#9ca3af; font-size:.83rem;">
+                        {{ __('messages.cashpower_no_meters') }}
+                    </div>
                 @endforelse
 
                 @if($cashpowerMeters->isNotEmpty())
-                    <a href="{{ route('cashpower.index') }}" class="btn-primary w-full justify-center text-center">
-                        ⚡ {{ __('messages.cashpower_buy') }}
+                    <a href="{{ route('cashpower.index') }}" class="btn btn-primary" style="justify-content:center; margin-top:4px;">
+                        <svg style="width:15px;height:15px;" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                        {{ __('messages.cashpower_buy') }}
                     </a>
                 @endif
             </div>
         </div>
     </div>
 
-    {{-- Pending Bills --}}
+    {{-- Pending bills --}}
     @if($pendingBills->isNotEmpty())
     <div class="card">
         <div class="card-header">
-            <h3 class="font-semibold text-gray-800">{{ __('messages.pending_bills') }}</h3>
-            <a href="{{ route('bills.index') }}" class="text-xs text-blue-600 hover:underline">{{ __('messages.view') }} →</a>
+            <h3>{{ __('messages.pending_bills') }}</h3>
+            <a href="{{ route('bills.index') }}" class="btn btn-secondary btn-sm">Voir tout →</a>
         </div>
-        <div class="overflow-x-auto">
-            <table class="table-base">
-                <thead class="bg-gray-50">
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead>
                     <tr>
-                        <th class="th">{{ __('messages.bill_number') }}</th>
-                        <th class="th">{{ __('messages.contract_name') }}</th>
-                        <th class="th">{{ __('messages.bill_due') }}</th>
-                        <th class="th">{{ __('messages.bill_total') }}</th>
-                        <th class="th">{{ __('messages.bill_status') }}</th>
-                        <th class="th"></th>
+                        <th>{{ __('messages.bill_number') }}</th>
+                        <th>{{ __('messages.contract_name') }}</th>
+                        <th>{{ __('messages.bill_due') }}</th>
+                        <th>{{ __('messages.bill_total') }}</th>
+                        <th>Statut</th>
+                        <th></th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-50">
+                <tbody>
                     @foreach($pendingBills->take(5) as $bill)
-                    <tr class="hover:bg-gray-50">
-                        <td class="td font-mono text-blue-700">{{ $bill->bill_number }}</td>
-                        <td class="td">{{ $bill->contract->name }}</td>
-                        <td class="td {{ $bill->isOverdue() ? 'text-red-600 font-medium' : '' }}">
-                            {{ $bill->due_date->format('d/m/Y') }}
-                        </td>
-                        <td class="td font-semibold">{{ number_format($bill->total_cfa, 0, ',', ' ') }} CFA</td>
-                        <td class="td">
+                    <tr>
+                        <td style="font-family:monospace; font-size:.78rem; color:#1d4ed8; font-weight:600;">{{ $bill->bill_number }}</td>
+                        <td style="font-weight:600;">{{ $bill->contract->name }}</td>
+                        <td style="{{ $bill->isOverdue() ? 'color:#dc2626; font-weight:700;' : '' }}">{{ $bill->due_date->format('d/m/Y') }}</td>
+                        <td style="font-weight:700;">{{ number_format($bill->total_cfa, 0, ',', ' ') }} CFA</td>
+                        <td>
                             @if($bill->isOverdue())
-                                <span class="badge-overdue">{{ __('messages.status_overdue') }}</span>
+                                <span class="badge badge-overdue">{{ __('messages.status_overdue') }}</span>
                             @else
-                                <span class="badge-pending">{{ __('messages.status_pending') }}</span>
+                                <span class="badge badge-pending">{{ __('messages.status_pending') }}</span>
                             @endif
                         </td>
-                        <td class="td">
-                            <a href="{{ route('bills.show', $bill) }}" class="text-blue-600 hover:underline text-xs">{{ __('messages.details') }}</a>
-                        </td>
+                        <td><a href="{{ route('bills.show', $bill) }}" class="btn btn-secondary btn-sm">{{ __('messages.details') }}</a></td>
                     </tr>
                     @endforeach
                 </tbody>
@@ -158,41 +195,44 @@
     </div>
     @endif
 
-    {{-- Contracts overview --}}
+    {{-- Contracts --}}
     <div class="card">
         <div class="card-header">
-            <h3 class="font-semibold text-gray-800">{{ __('messages.contracts') }}</h3>
-            <a href="{{ route('contracts.create') }}" class="btn-primary text-xs">
-                + {{ __('messages.add_contract') }}
+            <h3>{{ __('messages.contracts') }}</h3>
+            <a href="{{ route('contracts.create') }}" class="btn btn-primary btn-sm">
+                <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+                {{ __('messages.add_contract') }}
             </a>
         </div>
-        <div class="card-body">
+        <div class="card-body" style="display:flex; flex-direction:column; gap:10px;">
             @forelse($contracts as $contract)
-                <div class="flex items-center justify-between p-4 border border-gray-100 rounded-xl mb-3 last:mb-0 hover:bg-gray-50 transition-colors">
-                    <div class="flex items-start gap-4">
-                        <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center text-blue-700 font-bold text-sm">
+                <div style="display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border:1.5px solid #f0f0f0; border-radius:10px; transition:border-color .15s; hover:border-color:#D32F2F;">
+                    <div style="display:flex; align-items:center; gap:14px;">
+                        <div style="width:40px; height:40px; border-radius:10px; background:#D32F2F; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:.95rem; color:#fff; flex-shrink:0;">
                             {{ strtoupper(substr($contract->name, 0, 1)) }}
                         </div>
                         <div>
-                            <div class="font-semibold text-gray-800">{{ $contract->name }}</div>
-                            <div class="text-xs text-gray-400">{{ $contract->contract_number }} · {{ $contract->address }}, {{ $contract->city }}</div>
-                            <div class="flex items-center gap-2 mt-1">
-                                <span class="text-xs text-gray-500">{{ $contract->meters->count() }} {{ __('messages.meters') }}</span>
+                            <div style="font-weight:700; color:#111; font-size:.9rem;">{{ $contract->name }}</div>
+                            <div style="font-size:.75rem; color:#9ca3af; margin-top:2px; font-family:monospace;">{{ $contract->contract_number }}</div>
+                            <div style="display:flex; align-items:center; gap:8px; margin-top:5px;">
+                                <span style="font-size:.73rem; color:#6b7280;">
+                                    <svg style="width:12px;height:12px;display:inline;margin-right:2px;vertical-align:-1px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                                    {{ $contract->address }}, {{ $contract->city }}
+                                </span>
+                                <span class="badge badge-active" style="font-size:.65rem;">{{ $contract->meters->count() }} compteur(s)</span>
                                 @if($contract->status === 'active')
-                                    <span class="badge-active">{{ __('messages.status_active') }}</span>
-                                @else
-                                    <span class="badge-inactive">{{ __('messages.status_suspended') }}</span>
+                                    <span class="badge badge-active">{{ __('messages.status_active') }}</span>
                                 @endif
                             </div>
                         </div>
                     </div>
-                    <a href="{{ route('contracts.show', $contract) }}" class="btn-secondary text-xs">{{ __('messages.view') }}</a>
+                    <a href="{{ route('contracts.show', $contract) }}" class="btn btn-secondary btn-sm">{{ __('messages.view') }}</a>
                 </div>
             @empty
-                <div class="text-center py-12">
-                    <div class="text-4xl mb-4">📋</div>
-                    <p class="text-gray-500 mb-4">{{ __('messages.no_contracts') }}</p>
-                    <a href="{{ route('contracts.create') }}" class="btn-primary">+ {{ __('messages.add_contract') }}</a>
+                <div style="text-align:center; padding:48px 0;">
+                    <div style="font-size:3rem; margin-bottom:12px;">📋</div>
+                    <p style="color:#6b7280; font-size:.9rem; margin:0 0 16px;">{{ __('messages.no_contracts') }}</p>
+                    <a href="{{ route('contracts.create') }}" class="btn btn-primary">+ {{ __('messages.add_contract') }}</a>
                 </div>
             @endforelse
         </div>
@@ -205,26 +245,30 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>
 @if(array_sum($chartData) > 0)
-const ctx = document.getElementById('consumptionChart').getContext('2d');
-new Chart(ctx, {
+new Chart(document.getElementById('consumptionChart'), {
     type: 'bar',
     data: {
         labels: {!! json_encode($chartLabels) !!},
         datasets: [{
             label: 'kWh',
             data: {!! json_encode($chartData) !!},
-            backgroundColor: 'rgba(13,71,161,0.15)',
-            borderColor: '#0d47a1',
+            backgroundColor: 'rgba(211,47,47,0.15)',
+            borderColor: '#D32F2F',
             borderWidth: 2,
             borderRadius: 4,
+            hoverBackgroundColor: 'rgba(211,47,47,0.3)',
         }]
     },
     options: {
         responsive: true,
-        plugins: { legend: { display: false } },
+        maintainAspectRatio: false,
+        plugins: {
+            legend: { display: false },
+            tooltip: { callbacks: { label: ctx => ` ${ctx.parsed.y} kWh` } }
+        },
         scales: {
-            x: { grid: { display: false }, ticks: { maxTicksLimit: 10 } },
-            y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } }
+            x: { grid: { display: false }, ticks: { maxTicksLimit: 10, font: { size: 10 } } },
+            y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { font: { size: 10 } } }
         }
     }
 });
