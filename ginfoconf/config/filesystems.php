@@ -47,6 +47,30 @@ return [
             'report' => false,
         ],
 
+        // Private disk for manuscript uploads — not web-accessible directly
+        'submissions' => [
+            'driver'     => env('SUBMISSIONS_DISK_DRIVER', 'local'),
+            'root'       => storage_path('app/submissions'),
+            'visibility' => 'private',
+            'throw'      => false,
+            // S3 override: set SUBMISSIONS_DISK_DRIVER=s3 and AWS_SUBMISSIONS_BUCKET
+            'key'        => env('AWS_ACCESS_KEY_ID'),
+            'secret'     => env('AWS_SECRET_ACCESS_KEY'),
+            'region'     => env('AWS_DEFAULT_REGION'),
+            'bucket'     => env('AWS_SUBMISSIONS_BUCKET', env('AWS_BUCKET')),
+            'url'        => env('AWS_URL'),
+            'endpoint'   => env('AWS_ENDPOINT'),
+        ],
+
+        // Public disk for conference logos and cover images
+        'conferences' => [
+            'driver'     => env('CONFERENCES_DISK_DRIVER', 'local'),
+            'root'       => storage_path('app/public/conferences'),
+            'url'        => rtrim(env('APP_URL', 'http://localhost'), '/') . '/storage/conferences',
+            'visibility' => 'public',
+            'throw'      => false,
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),
