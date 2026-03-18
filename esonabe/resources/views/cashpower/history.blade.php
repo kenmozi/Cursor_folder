@@ -2,65 +2,77 @@
 @section('title', __('messages.cashpower_history'))
 @section('subtitle', $meter->meter_number . ' — ' . $meter->contract->name)
 @section('header-actions')
-    <a href="{{ route('cashpower.index') }}" class="btn-secondary text-xs">← {{ __('messages.back') }}</a>
+    <a href="{{ route('cashpower.index') }}" class="btn btn-secondary btn-sm">← {{ __('messages.back') }}</a>
 @endsection
 
 @section('content')
-<div class="space-y-4">
+<div style="display:flex; flex-direction:column; gap:20px;">
+
     {{-- Balance card --}}
     <div class="card">
-        <div class="card-body flex items-center justify-between">
+        <div style="height:3px; background:linear-gradient(90deg,#D32F2F,#FFD600,#2E7D32);"></div>
+        <div class="card-body" style="display:flex; align-items:center; justify-content:space-between;">
             <div>
-                <div class="text-sm text-gray-500">{{ __('messages.cashpower_balance') }}</div>
-                <div class="text-3xl font-bold {{ $meter->balance_color_class }} mt-1">
-                    {{ number_format($meter->cashpower_balance_kwh, 2) }} kWh
+                <div style="font-size:.78rem; color:#6b7280; font-weight:600;">{{ __('messages.cashpower_balance') }}</div>
+                @php $bc = match($meter->balance_status) { 'danger'=>'#dc2626','warning'=>'#d97706',default=>'#16a34a' }; @endphp
+                <div style="font-size:2.5rem; font-weight:800; color:{{ $bc }}; margin-top:4px; line-height:1.1;">
+                    {{ number_format($meter->cashpower_balance_kwh, 2) }} <span style="font-size:1rem; font-weight:500; color:#9ca3af;">kWh</span>
                 </div>
-                <div class="text-xs text-gray-400 mt-1">{{ $meter->class_label }} · {{ $meter->amperage }}A</div>
+                <div style="font-size:.73rem; color:#6b7280; margin-top:4px;">{{ $meter->class_label }} · {{ $meter->amperage }}A</div>
             </div>
-            <a href="{{ route('cashpower.index') }}" class="btn-primary">⚡ {{ __('messages.cashpower_buy') }}</a>
+            <a href="{{ route('cashpower.index') }}" class="btn btn-primary">
+                <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                {{ __('messages.cashpower_buy') }}
+            </a>
         </div>
     </div>
 
     {{-- Transactions --}}
     <div class="card">
         <div class="card-header">
-            <h3 class="font-semibold text-gray-800">{{ __('messages.cashpower_history') }}</h3>
+            <h3>{{ __('messages.cashpower_history') }}</h3>
+            @if($transactions->total() > 0)
+                <span style="font-size:.73rem; color:#9ca3af; background:#f9f9f9; padding:3px 9px; border-radius:20px; border:1px solid #ebebeb;">
+                    {{ $transactions->total() }} {{ $transactions->total() > 1 ? 'transactions' : 'transaction' }}
+                </span>
+            @endif
         </div>
+
         @if($transactions->isEmpty())
-        <div class="card-body text-center py-12 text-gray-400">
-            <div class="text-3xl mb-2">📭</div>
-            <p>{{ __('messages.no_data') }}</p>
+        <div class="card-body" style="text-align:center; padding:64px 24px;">
+            <div style="font-size:3rem; margin-bottom:12px;">📭</div>
+            <p style="color:#9ca3af; font-size:.88rem; margin:0;">{{ __('messages.no_data') }}</p>
         </div>
         @else
-        <div class="overflow-x-auto">
-            <table class="table-base">
-                <thead class="bg-gray-50">
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead>
                     <tr>
-                        <th class="th">{{ __('messages.transaction_ref') }}</th>
-                        <th class="th">{{ __('messages.purchase_date') }}</th>
-                        <th class="th">{{ __('messages.amount') }}</th>
-                        <th class="th">{{ __('messages.cashpower_kwh') }}</th>
-                        <th class="th">{{ __('messages.cashpower_token') }}</th>
-                        <th class="th">Avant</th>
-                        <th class="th">Après</th>
-                        <th class="th">{{ __('messages.bill_status') }}</th>
+                        <th>{{ __('messages.transaction_ref') }}</th>
+                        <th>{{ __('messages.purchase_date') }}</th>
+                        <th>{{ __('messages.amount') }}</th>
+                        <th>{{ __('messages.cashpower_kwh') }}</th>
+                        <th>{{ __('messages.cashpower_token') }}</th>
+                        <th>Avant</th>
+                        <th>Après</th>
+                        <th>{{ __('messages.bill_status') }}</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-50">
+                <tbody>
                     @foreach($transactions as $tx)
-                    <tr class="hover:bg-gray-50">
-                        <td class="td font-mono text-xs text-blue-700">{{ $tx->transaction_ref }}</td>
-                        <td class="td text-sm">{{ $tx->created_at->format('d/m/Y H:i') }}</td>
-                        <td class="td font-semibold">{{ number_format($tx->amount_cfa, 0, ',', ' ') }} CFA</td>
-                        <td class="td text-green-700 font-medium">+{{ $tx->kwh_purchased }} kWh</td>
-                        <td class="td font-mono text-xs">{{ $tx->token_code }}</td>
-                        <td class="td text-xs text-gray-400">{{ $tx->balance_before_kwh }} kWh</td>
-                        <td class="td text-xs font-medium text-blue-700">{{ $tx->balance_after_kwh }} kWh</td>
-                        <td class="td">
+                    <tr>
+                        <td style="font-family:monospace; font-size:.78rem; color:#1d4ed8; font-weight:600;">{{ $tx->transaction_ref }}</td>
+                        <td style="font-size:.83rem; white-space:nowrap;">{{ $tx->created_at->format('d/m/Y H:i') }}</td>
+                        <td style="font-weight:700;">{{ number_format($tx->amount_cfa, 0, ',', ' ') }} <span style="font-size:.75rem; color:#9ca3af; font-weight:500;">CFA</span></td>
+                        <td style="font-weight:700; color:#16a34a;">+{{ $tx->kwh_purchased }} kWh</td>
+                        <td style="font-family:monospace; font-size:.76rem; color:#374151; letter-spacing:.5px;">{{ $tx->token_code }}</td>
+                        <td style="font-size:.8rem; color:#9ca3af;">{{ $tx->balance_before_kwh }} kWh</td>
+                        <td style="font-size:.83rem; font-weight:600; color:#1d4ed8;">{{ $tx->balance_after_kwh }} kWh</td>
+                        <td>
                             @if($tx->status === 'completed')
-                                <span class="badge-paid">{{ __('messages.status_completed') }}</span>
+                                <span class="badge badge-paid">{{ __('messages.status_completed') }}</span>
                             @else
-                                <span class="badge-overdue">{{ __('messages.status_failed') }}</span>
+                                <span class="badge badge-overdue">{{ __('messages.status_failed') }}</span>
                             @endif
                         </td>
                     </tr>
@@ -68,10 +80,11 @@
                 </tbody>
             </table>
         </div>
-        <div class="px-6 py-4 border-t border-gray-100">
+        <div style="padding:14px 20px; border-top:1px solid #f0f0f0;">
             {{ $transactions->links() }}
         </div>
         @endif
     </div>
+
 </div>
 @endsection
