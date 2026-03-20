@@ -30,7 +30,7 @@ class Conference extends Model
         'review_open',
         'review_close',
         'notification_date',
-        'camera_ready_deadline',
+        'camera_ready_date',
     ];
 
     protected function casts(): array
@@ -43,7 +43,7 @@ class Conference extends Model
             'review_open'            => 'datetime',
             'review_close'           => 'datetime',
             'notification_date'      => 'datetime',
-            'camera_ready_deadline'  => 'datetime',
+            'camera_ready_date'      => 'datetime',
         ];
     }
 
