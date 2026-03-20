@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->string('timezone', 50)->default('UTC');
 
             // Status: draft | active | archived
-            $table->string('status', 20)->default('draft')->index();
+            $table->string('status', 20)->default('draft');
 
             // Review configuration
             $table->string('blind_mode', 10)->default('double'); // open|single|double
@@ -30,7 +30,7 @@ return new class extends Migration {
             $table->timestamp('review_open')->nullable();
             $table->timestamp('review_close')->nullable();
             $table->timestamp('notification_date')->nullable();
-            $table->timestamp('camera_ready_deadline')->nullable();
+            $table->timestamp('camera_ready_date')->nullable();  // renamed from camera_ready_deadline
 
             $table->timestamps();
 

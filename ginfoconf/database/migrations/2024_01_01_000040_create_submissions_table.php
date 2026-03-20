@@ -21,7 +21,7 @@ return new class extends Migration {
             $table->json('keywords')->nullable();
 
             // status state machine (see SubmissionStatus enum)
-            $table->string('status', 30)->default('draft')->index();
+            $table->string('status', 30)->default('draft');
 
             // Internal note written by chair on accept/reject
             $table->text('decision_note')->nullable();
@@ -31,12 +31,14 @@ return new class extends Migration {
 
             $table->timestamps();
 
+            // Single-column status index (no duplicate — composite below also covers it)
+            $table->index('status');
             $table->index(['conference_id', 'status']);
             $table->index(['submitter_id', 'conference_id']);
 
-            // Full-text index on title + abstract (MySQL FULLTEXT, ignored by SQLite)
-            // Postgres users: add tsvector index via raw SQL in a separate migration
-            $table->fullText(['title', 'abstract'])->algorithm('ngram');
+            // Full-text index on title + abstract
+            // MySQL: uncomment the line below; SQLite/Postgres: use a separate migration
+            // $table->fullText(['title', 'abstract']);
         });
     }
 
