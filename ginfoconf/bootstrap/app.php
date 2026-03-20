@@ -27,7 +27,6 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         // CORS — handled via config/cors.php (allow frontend origin)
-        $middleware->statefulApi();
 
         // Named middleware aliases
         $middleware->alias([
