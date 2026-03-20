@@ -21,17 +21,16 @@ class DemoConferenceSeeder extends Seeder
         $conference = Conference::updateOrCreate(
             ['slug' => 'ginfo-2025'],
             [
-                'status'            => 'open',
+                'owner_id'          => $admin->id,
+                'status'            => 'active',
                 'blind_mode'        => 'double',
+                'timezone'          => 'Europe/Paris',
                 'submission_open'   => now()->subDays(5),
                 'submission_close'  => now()->addDays(30),
                 'review_open'       => now()->addDays(35),
                 'review_close'      => now()->addDays(60),
                 'notification_date' => now()->addDays(70),
                 'camera_ready_date' => now()->addDays(90),
-                'timezone'          => 'Europe/Paris',
-                'location'          => 'Ouagadougou, Burkina Faso',
-                'website_url'       => 'https://ginfo2025.example.com',
             ]
         );
 
@@ -125,10 +124,20 @@ class DemoConferenceSeeder extends Seeder
             }
 
             foreach ($trackData['topics'] as $topicData) {
-                $topic = Topic::updateOrCreate(
-                    ['track_id' => $track->id, 'slug' => \Illuminate\Support\Str::slug($topicData['en'])],
-                    []
-                );
+                // Find existing topic by English name, or create a new one
+                $existingTranslation = TopicTranslation::where('locale', 'en')
+                    ->where('name', $topicData['en'])
+                    ->whereHas('topic', fn($q) => $q->where('track_id', $track->id))
+                    ->first();
+
+                if ($existingTranslation) {
+                    $topic = $existingTranslation->topic;
+                } else {
+                    $topic = Topic::create([
+                        'conference_id' => $conference->id,
+                        'track_id'      => $track->id,
+                    ]);
+                }
 
                 TopicTranslation::updateOrCreate(
                     ['topic_id' => $topic->id, 'locale' => 'en'],
