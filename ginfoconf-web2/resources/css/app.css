@@ -1,0 +1,85 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+@theme {
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
+/* Status badge utilities */
+@layer utilities {
+    .badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.2rem 0.65rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        border-radius: 9999px;
+        line-height: 1.4;
+        white-space: nowrap;
+    }
+
+    .badge-draft {
+        background-color: #f3f4f6;
+        color: #6b7280;
+    }
+
+    .badge-submitted {
+        background-color: #dbeafe;
+        color: #1d4ed8;
+    }
+
+    .badge-under_review {
+        background-color: #fef9c3;
+        color: #92400e;
+    }
+
+    .badge-accepted {
+        background-color: #dcfce7;
+        color: #166534;
+    }
+
+    .badge-rejected {
+        background-color: #fee2e2;
+        color: #991b1b;
+    }
+
+    .badge-revision_required {
+        background-color: #ffedd5;
+        color: #9a3412;
+    }
+
+    .badge-camera_ready {
+        background-color: #ede9fe;
+        color: #5b21b6;
+    }
+
+    .badge-withdrawn {
+        background-color: #f3f4f6;
+        color: #6b7280;
+    }
+
+    .badge-active {
+        background-color: #dcfce7;
+        color: #166534;
+    }
+
+    .badge-open {
+        background-color: #dbeafe;
+        color: #1d4ed8;
+    }
+
+    .badge-closed {
+        background-color: #f3f4f6;
+        color: #6b7280;
+    }
+
+    .badge-archived {
+        background-color: #f3f4f6;
+        color: #9ca3af;
+    }
+}
