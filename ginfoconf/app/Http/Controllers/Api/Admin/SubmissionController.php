@@ -22,7 +22,7 @@ class SubmissionController extends Controller
         $this->authorize('manage', $conference);
 
         $query = $conference->submissions()
-            ->with(['submitter:id,name,email', 'authors', 'topics', 'assignments.reviewer:id,name'])
+            ->with(['submitter:id,name,email', 'authors', 'topics', 'reviewAssignments.reviewer:id,name'])
             ->latest();
 
         if ($request->filled('status')) {
@@ -50,8 +50,8 @@ class SubmissionController extends Controller
             'authors',
             'topics',
             'files',
-            'assignments.reviewer:id,name,email',
-            'assignments.review',
+            'reviewAssignments.reviewer:id,name,email',
+            'reviewAssignments.review',
         ]);
 
         return response()->json(new SubmissionResource($submission));
@@ -67,7 +67,7 @@ class SubmissionController extends Controller
         abort_unless($submission->conference_id === $conference->id, 404);
 
         $data = $request->validate([
-            'status' => ['required', 'string', 'in:accepted,rejected,revision_required'],
+            'status' => ['required', 'string', 'in:under_review,accepted,rejected,revision_required'],
             'notify' => ['boolean'],
         ]);
 

@@ -76,13 +76,18 @@ class SubmissionController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'conference_id' => 'required',
+            'conference_slug' => 'required',
             'title' => 'required|string|max:500',
             'abstract' => 'required|string',
             'keywords' => 'nullable|string',
         ]);
 
-        $data = $request->only('conference_id', 'title', 'abstract', 'keywords', 'track_id');
+        $data = $request->only('conference_slug', 'title', 'abstract', 'track_id');
+
+        // Convert comma-separated keywords string to array
+        if ($request->filled('keywords')) {
+            $data['keywords'] = array_map('trim', explode(',', $request->input('keywords')));
+        }
 
         // Handle authors
         if ($request->has('authors')) {

@@ -36,6 +36,11 @@ class ConferencePolicy
         return true;
     }
 
+    public function manage(User $user, Conference $conference): bool
+    {
+        return $user->isConferenceAdmin($conference);
+    }
+
     public function update(User $user, Conference $conference): bool
     {
         return $user->isConferenceAdmin($conference);

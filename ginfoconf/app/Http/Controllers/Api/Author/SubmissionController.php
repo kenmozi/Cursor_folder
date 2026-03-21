@@ -47,7 +47,7 @@ class SubmissionController extends Controller
     {
         $this->authorize('view', $submission);
 
-        $submission->load(['conference', 'authors', 'topics', 'files', 'assignments.reviewer']);
+        $submission->load(['conference', 'authors', 'topics', 'files', 'reviewAssignments.reviewer']);
 
         return response()->json(new SubmissionResource($submission));
     }
@@ -81,7 +81,7 @@ class SubmissionController extends Controller
      */
     public function withdraw(Request $request, Submission $submission): JsonResponse
     {
-        $this->authorize('update', $submission);
+        $this->authorize('withdraw', $submission);
 
         $submission = $this->service->withdraw($submission);
 
