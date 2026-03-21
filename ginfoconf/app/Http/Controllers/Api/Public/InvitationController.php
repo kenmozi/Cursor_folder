@@ -21,10 +21,11 @@ class InvitationController extends Controller
 
         return response()->json([
             'id'              => $invitation->id,
+            'email'           => $invitation->email,
             'status'          => $invitation->status,
             'is_expired'      => $invitation->isExpired(),
             'conference_slug' => $invitation->conference->slug,
-            'conference_name' => $invitation->conference->translation()->title ?? '',
+            'conference_name' => $invitation->conference->translation()?->title ?? '',
             'expires_at'      => $invitation->expires_at,
             'message'         => $invitation->message,
         ]);

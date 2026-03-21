@@ -44,6 +44,7 @@ class ConferenceController extends Controller
 
         $conference = Conference::create([
             'slug'              => Str::slug($data['slug'] ?? $data['title']),
+            'owner_id'          => $request->user()->id,
             'status'            => 'draft',
             'blind_mode'        => $data['blind_mode'] ?? 'double',
             'submission_open'   => $data['submission_open'] ?? null,

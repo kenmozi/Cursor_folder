@@ -21,7 +21,7 @@ class ReviewerController extends Controller
     {
         $this->authorize('manage', $conference);
 
-        $invitations = $conference->invitations()
+        $invitations = $conference->reviewerInvitations()
             ->with('inviter:id,name,email')
             ->latest()
             ->paginate(50);
@@ -73,7 +73,7 @@ class ReviewerController extends Controller
     {
         $this->authorize('manage', $conference);
 
-        $reviewers = $conference->roles()
+        $reviewers = $conference->conferenceRoles()
             ->where('role', 'reviewer')
             ->with('user:id,name,email,affiliation,country')
             ->get()
@@ -89,7 +89,7 @@ class ReviewerController extends Controller
     {
         $this->authorize('manage', $conference);
 
-        $conference->roles()
+        $conference->conferenceRoles()
             ->where('user_id', $userId)
             ->where('role', 'reviewer')
             ->delete();

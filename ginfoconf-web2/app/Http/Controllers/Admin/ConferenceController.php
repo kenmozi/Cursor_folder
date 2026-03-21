@@ -99,6 +99,10 @@ class ConferenceController extends Controller
 
         $conference = $response->json('data') ?? $response->json();
 
+        // Flatten English translation into the conference array for the view
+        $enTranslation = collect($conference['translations'] ?? [])->firstWhere('locale', 'en') ?? [];
+        $conference = array_merge($conference, $enTranslation);
+
         return view('dashboard.admin.conferences.edit', ['conference' => $conference]);
     }
 
@@ -131,7 +135,12 @@ class ConferenceController extends Controller
     public function branding(string $slug)
     {
         $response = $this->api->adminGetConference($slug);
-        $conference = $response->successful() ? ($response->json('data') ?? $response->json()) : [];
+
+        if (!$response->successful()) {
+            return redirect()->route('admin.conferences')->with('error', 'Conference not found or access denied.');
+        }
+
+        $conference = $response->json('data') ?? $response->json();
 
         return view('dashboard.admin.conferences.branding', ['conference' => $conference]);
     }
@@ -168,7 +177,12 @@ class ConferenceController extends Controller
     public function dates(string $slug)
     {
         $response = $this->api->adminGetConference($slug);
-        $conference = $response->successful() ? ($response->json('data') ?? $response->json()) : [];
+
+        if (!$response->successful()) {
+            return redirect()->route('admin.conferences')->with('error', 'Conference not found or access denied.');
+        }
+
+        $conference = $response->json('data') ?? $response->json();
 
         return view('dashboard.admin.conferences.dates', ['conference' => $conference]);
     }
@@ -194,7 +208,12 @@ class ConferenceController extends Controller
     public function committee(string $slug)
     {
         $response = $this->api->adminGetConference($slug);
-        $conference = $response->successful() ? ($response->json('data') ?? $response->json()) : [];
+
+        if (!$response->successful()) {
+            return redirect()->route('admin.conferences')->with('error', 'Conference not found or access denied.');
+        }
+
+        $conference = $response->json('data') ?? $response->json();
 
         return view('dashboard.admin.conferences.committee', ['conference' => $conference]);
     }

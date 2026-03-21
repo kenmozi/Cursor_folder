@@ -14,7 +14,6 @@ class UpdateConferenceContentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'locale'       => ['required', 'string', 'in:en,fr,ja'],
             'title'        => ['required', 'string', 'max:500'],
             'subtitle'     => ['nullable', 'string', 'max:500'],
             'description'  => ['nullable', 'string'],
