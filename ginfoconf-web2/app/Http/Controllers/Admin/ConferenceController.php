@@ -50,16 +50,25 @@ class ConferenceController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'slug' => 'required|string|max:100|regex:/^[a-z0-9\-]+$/',
-            'title' => 'required|string|max:500',
-            'subtitle' => 'nullable|string',
-            'description' => 'nullable|string',
-            'blind_mode' => 'required|in:double,single,open',
-            'timezone' => 'required|string',
+            'slug'            => 'required|string|max:100|regex:/^[a-z0-9\-]+$/',
+            'title'           => 'required|string|max:500',
+            'subtitle'        => 'nullable|string',
+            'description'     => 'nullable|string',
+            'blind_mode'      => 'required|in:double,single,open',
+            'timezone'        => 'required|string',
+            'city'            => 'nullable|string|max:200',
+            'website_url'     => 'nullable|url|max:500',
+            'location'        => 'nullable|string|max:500',
+            'contact_name'    => 'nullable|string|max:255',
+            'contact_email'   => 'nullable|email|max:255',
+            'contact_phone'   => 'nullable|string|max:100',
+            'contact_address' => 'nullable|string|max:1000',
         ]);
 
         $data = $request->only([
             'slug', 'title', 'subtitle', 'description', 'blind_mode', 'timezone',
+            'city', 'website_url', 'location',
+            'contact_name', 'contact_email', 'contact_phone', 'contact_address',
             'submission_open', 'submission_close', 'review_open', 'review_close',
             'notification_date', 'camera_ready_date',
         ]);
@@ -109,15 +118,28 @@ class ConferenceController extends Controller
     public function update(Request $request, string $slug)
     {
         $request->validate([
-            'title' => 'required|string|max:500',
-            'subtitle' => 'nullable|string',
-            'description' => 'nullable|string',
-            'blind_mode' => 'required|in:double,single,open',
-            'timezone' => 'required|string',
+            'title'           => 'required|string|max:500',
+            'subtitle'        => 'nullable|string',
+            'description'     => 'nullable|string',
+            'blind_mode'      => 'required|in:double,single,open',
+            'timezone'        => 'required|string',
+            'city'            => 'nullable|string|max:200',
+            'website_url'     => 'nullable|url|max:500',
+            'location'        => 'nullable|string|max:500',
+            'contact_name'    => 'nullable|string|max:255',
+            'contact_email'   => 'nullable|email|max:255',
+            'contact_phone'   => 'nullable|string|max:100',
+            'contact_address' => 'nullable|string|max:1000',
         ]);
 
+        // Split: content fields go to content API, structural fields to update API
+        $contentData = $request->only(['title', 'subtitle', 'description', 'cfp_text', 'publication_guidelines']);
+        $this->api->adminUpsertContent($slug, 'en', $contentData);
+
         $data = $request->only([
-            'title', 'subtitle', 'description', 'blind_mode', 'timezone',
+            'blind_mode', 'timezone',
+            'city', 'website_url', 'location',
+            'contact_name', 'contact_email', 'contact_phone', 'contact_address',
             'submission_open', 'submission_close', 'review_open', 'review_close',
             'notification_date', 'camera_ready_date',
         ]);
@@ -149,7 +171,7 @@ class ConferenceController extends Controller
     {
         $request->validate([
             'type' => 'required|in:logo,cover',
-            'file' => 'required|file|image|max:5120',
+            'file' => 'required|file|image|mimes:jpeg,png,gif,webp|max:5120',
         ]);
 
         $response = $this->api->adminUploadMedia($slug, $request->input('type'), $request->file('file'));
@@ -160,6 +182,33 @@ class ConferenceController extends Controller
 
         $error = $response->json('message') ?? 'Failed to upload media.';
         return back()->with('error', $error);
+    }
+
+    public function uploadGallery(Request $request, string $slug)
+    {
+        $request->validate([
+            'file' => 'required|file|image|mimes:jpeg,png,gif,webp|max:5120',
+        ]);
+
+        $response = $this->api->adminUploadGallery($slug, $request->file('file'));
+
+        if ($response->successful()) {
+            return back()->with('success', 'Gallery image uploaded.');
+        }
+
+        $error = $response->json('message') ?? 'Failed to upload gallery image.';
+        return back()->with('error', $error);
+    }
+
+    public function deleteGalleryItem(string $slug, int $mediaId)
+    {
+        $response = $this->api->adminDeleteGalleryItem($slug, $mediaId);
+
+        if ($response->successful()) {
+            return back()->with('success', 'Gallery image deleted.');
+        }
+
+        return back()->with('error', 'Failed to delete gallery image.');
     }
 
     public function deleteMedia(Request $request, string $slug, string $type)
@@ -205,17 +254,115 @@ class ConferenceController extends Controller
         return back()->with('error', $error);
     }
 
-    public function committee(string $slug)
+    public function tracks(string $slug)
     {
-        $response = $this->api->adminGetConference($slug);
+        $conferenceResponse = $this->api->adminGetConference($slug);
+        if (!$conferenceResponse->successful()) {
+            return redirect()->route('admin.conferences')->with('error', 'Conference not found.');
+        }
+        $conference = $conferenceResponse->json('data') ?? $conferenceResponse->json();
 
-        if (!$response->successful()) {
-            return redirect()->route('admin.conferences')->with('error', 'Conference not found or access denied.');
+        $tracksResponse = $this->api->adminGetTracks($slug);
+        $tracks = $tracksResponse->successful() ? $tracksResponse->json() : [];
+
+        return view('dashboard.admin.conferences.tracks', [
+            'conference' => $conference,
+            'tracks'     => $tracks,
+        ]);
+    }
+
+    public function storeTrack(Request $request, string $slug)
+    {
+        $request->validate([
+            'name'        => 'required|string|max:300',
+            'description' => 'nullable|string',
+        ]);
+
+        $response = $this->api->adminCreateTrack($slug, $request->only('name', 'description'));
+
+        if ($response->successful()) {
+            return back()->with('success', 'Track added successfully.');
         }
 
-        $conference = $response->json('data') ?? $response->json();
+        $error = $response->json('message') ?? 'Failed to add track.';
+        return back()->with('error', $error);
+    }
 
-        return view('dashboard.admin.conferences.committee', ['conference' => $conference]);
+    public function updateTrack(Request $request, string $slug, int $trackId)
+    {
+        $request->validate([
+            'name'        => 'required|string|max:300',
+            'description' => 'nullable|string',
+        ]);
+
+        $response = $this->api->adminUpdateTrack($slug, $trackId, $request->only('name', 'description'));
+
+        if ($response->successful()) {
+            return back()->with('success', 'Track updated.');
+        }
+
+        return back()->with('error', $response->json('message') ?? 'Failed to update track.');
+    }
+
+    public function deleteTrack(string $slug, int $trackId)
+    {
+        $response = $this->api->adminDeleteTrack($slug, $trackId);
+
+        if ($response->successful()) {
+            return back()->with('success', 'Track deleted.');
+        }
+
+        return back()->with('error', 'Failed to delete track.');
+    }
+
+    public function committee(string $slug)
+    {
+        $conferenceResponse = $this->api->adminGetConference($slug);
+        if (!$conferenceResponse->successful()) {
+            return redirect()->route('admin.conferences')->with('error', 'Conference not found or access denied.');
+        }
+        $conference = $conferenceResponse->json('data') ?? $conferenceResponse->json();
+
+        $committeeResponse = $this->api->adminGetCommittee($slug);
+        $committees = $committeeResponse->successful() ? $committeeResponse->json() : [];
+
+        return view('dashboard.admin.conferences.committee', [
+            'conference' => $conference,
+            'committees' => $committees,
+        ]);
+    }
+
+    public function addCommitteeMember(Request $request, string $slug)
+    {
+        $request->validate([
+            'committee'   => 'required|in:scientific,academic,program,organizing',
+            'name'        => 'required|string|max:255',
+            'role'        => 'nullable|in:chair,co_chair,member',
+            'email'       => 'nullable|email|max:255',
+            'affiliation' => 'nullable|string|max:500',
+            'country'     => 'nullable|string|size:2',
+        ]);
+
+        $response = $this->api->adminAddCommitteeMember($slug, $request->only(
+            'committee', 'name', 'role', 'email', 'affiliation', 'country'
+        ));
+
+        if ($response->successful()) {
+            return back()->with('success', 'Committee member added.');
+        }
+
+        return back()->with('error', $response->json('message') ?? 'Failed to add member.');
+    }
+
+    public function deleteCommitteeMember(string $slug, int $memberId)
+    {
+        $response = $this->api->adminDeleteCommitteeMember($slug, $memberId);
+
+        if ($response->successful()) {
+            return back()->with('success', 'Member removed.');
+        }
+
+        return back()->with('error', 'Failed to remove member.');
     }
 
     public function submissions(Request $request, string $slug)

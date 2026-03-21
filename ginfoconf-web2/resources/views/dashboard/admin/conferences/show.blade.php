@@ -61,6 +61,17 @@
             <p class="text-sm text-gray-500 mt-1">Set submission and review deadlines</p>
         </a>
 
+        <a href="{{ route('admin.conferences.tracks', $slug) }}"
+           class="bg-white rounded-xl border border-gray-200 p-5 hover:border-indigo-300 hover:shadow-sm transition-all group">
+            <div class="w-10 h-10 bg-teal-100 rounded-lg flex items-center justify-center mb-3 group-hover:bg-teal-200 transition-colors">
+                <svg class="w-5 h-5 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
+                </svg>
+            </div>
+            <h3 class="font-semibold text-gray-900 group-hover:text-teal-700">Tracks</h3>
+            <p class="text-sm text-gray-500 mt-1">Manage conference tracks</p>
+        </a>
+
         <a href="{{ route('admin.conferences.committee', $slug) }}"
            class="bg-white rounded-xl border border-gray-200 p-5 hover:border-indigo-300 hover:shadow-sm transition-all group">
             <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mb-3 group-hover:bg-green-200 transition-colors">
@@ -68,8 +79,8 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
                 </svg>
             </div>
-            <h3 class="font-semibold text-gray-900 group-hover:text-green-700">Committee</h3>
-            <p class="text-sm text-gray-500 mt-1">Manage program committee members</p>
+            <h3 class="font-semibold text-gray-900 group-hover:text-green-700">Committees</h3>
+            <p class="text-sm text-gray-500 mt-1">Scientific, Academic, Program & Organizing</p>
         </a>
 
         <a href="{{ route('admin.conferences.submissions', $slug) }}"

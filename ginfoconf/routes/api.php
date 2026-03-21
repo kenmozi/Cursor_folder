@@ -12,6 +12,8 @@ use App\Http\Controllers\Api\Admin\ConferenceMediaController;
 use App\Http\Controllers\Api\Admin\ReviewerController;
 use App\Http\Controllers\Api\Admin\SubmissionController as AdminSubmissionController;
 use App\Http\Controllers\Api\Admin\AssignmentController;
+use App\Http\Controllers\Api\Admin\TrackController;
+use App\Http\Controllers\Api\Admin\CommitteeController;
 use App\Http\Controllers\Api\SuperAdmin\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -86,9 +88,22 @@ Route::prefix('v1')->group(function () {
             Route::put('conferences/{conference}/content/{locale}',       [ConferenceContentController::class, 'upsert']);
             Route::delete('conferences/{conference}/content/{locale}',    [ConferenceContentController::class, 'destroy']);
 
-            // Conference media
-            Route::post('conferences/{conference}/media',         [ConferenceMediaController::class, 'store']);
-            Route::delete('conferences/{conference}/media/{type}', [ConferenceMediaController::class, 'destroy']);
+            // Conference media (logo, cover, gallery)
+            Route::post('conferences/{conference}/media',                        [ConferenceMediaController::class, 'store']);
+            Route::delete('conferences/{conference}/media/{type}',               [ConferenceMediaController::class, 'destroy']);
+            Route::delete('conferences/{conference}/media/gallery/{media}',      [ConferenceMediaController::class, 'destroyGalleryItem']);
+
+            // Tracks
+            Route::get('conferences/{conference}/tracks',          [TrackController::class, 'index']);
+            Route::post('conferences/{conference}/tracks',         [TrackController::class, 'store']);
+            Route::put('conferences/{conference}/tracks/{track}',  [TrackController::class, 'update']);
+            Route::delete('conferences/{conference}/tracks/{track}', [TrackController::class, 'destroy']);
+
+            // Committee members
+            Route::get('conferences/{conference}/committee',             [CommitteeController::class, 'index']);
+            Route::post('conferences/{conference}/committee',            [CommitteeController::class, 'store']);
+            Route::put('conferences/{conference}/committee/{member}',    [CommitteeController::class, 'update']);
+            Route::delete('conferences/{conference}/committee/{member}', [CommitteeController::class, 'destroy']);
 
             // Reviewer invitations
             Route::get('conferences/{conference}/invitations',         [ReviewerController::class, 'invitations']);

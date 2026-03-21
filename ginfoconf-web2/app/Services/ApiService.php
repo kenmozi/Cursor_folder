@@ -183,6 +183,61 @@ class ApiService
         return $this->client()->delete("/admin/conferences/{$slug}/media/{$type}");
     }
 
+    // Tracks
+    public function adminGetTracks(string $slug): Response
+    {
+        return $this->client()->get("/admin/conferences/{$slug}/tracks");
+    }
+
+    public function adminCreateTrack(string $slug, array $data): Response
+    {
+        return $this->client()->post("/admin/conferences/{$slug}/tracks", $data);
+    }
+
+    public function adminUpdateTrack(string $slug, int $trackId, array $data): Response
+    {
+        return $this->client()->put("/admin/conferences/{$slug}/tracks/{$trackId}", $data);
+    }
+
+    public function adminDeleteTrack(string $slug, int $trackId): Response
+    {
+        return $this->client()->delete("/admin/conferences/{$slug}/tracks/{$trackId}");
+    }
+
+    // Committee
+    public function adminGetCommittee(string $slug): Response
+    {
+        return $this->client()->get("/admin/conferences/{$slug}/committee");
+    }
+
+    public function adminAddCommitteeMember(string $slug, array $data): Response
+    {
+        return $this->client()->post("/admin/conferences/{$slug}/committee", $data);
+    }
+
+    public function adminUpdateCommitteeMember(string $slug, int $memberId, array $data): Response
+    {
+        return $this->client()->put("/admin/conferences/{$slug}/committee/{$memberId}", $data);
+    }
+
+    public function adminDeleteCommitteeMember(string $slug, int $memberId): Response
+    {
+        return $this->client()->delete("/admin/conferences/{$slug}/committee/{$memberId}");
+    }
+
+    // Gallery
+    public function adminUploadGallery(string $slug, $file): Response
+    {
+        return Http::baseUrl($this->baseUrl)->withToken($this->token)
+            ->attach('file', file_get_contents($file->getPathname()), $file->getClientOriginalName())
+            ->post("/admin/conferences/{$slug}/media", ['type' => 'gallery']);
+    }
+
+    public function adminDeleteGalleryItem(string $slug, int $mediaId): Response
+    {
+        return $this->client()->delete("/admin/conferences/{$slug}/media/gallery/{$mediaId}");
+    }
+
     public function adminGetReviewers(string $slug): Response
     {
         return $this->client()->get("/admin/conferences/{$slug}/reviewers");

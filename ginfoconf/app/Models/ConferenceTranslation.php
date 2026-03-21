@@ -16,6 +16,7 @@ class ConferenceTranslation extends Model
         'cfp_text',
         'venue_text',
         'contact_text',
+        'publication_guidelines',
     ];
 
     public function conference(): BelongsTo

@@ -9,6 +9,7 @@ class CommitteeMember extends Model
 {
     protected $fillable = [
         'conference_id',
+        'committee',
         'user_id',
         'name',
         'email',

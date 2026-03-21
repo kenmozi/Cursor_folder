@@ -15,8 +15,13 @@ class ConferenceResource extends JsonResource
             'status'            => $this->status,
             'blind_mode'        => $this->blind_mode,
             'timezone'          => $this->timezone,
-            'location'          => $this->location,
             'website_url'       => $this->website_url,
+            'location'          => $this->location,
+            'city'              => $this->city,
+            'contact_name'      => $this->contact_name,
+            'contact_email'     => $this->contact_email,
+            'contact_phone'     => $this->contact_phone,
+            'contact_address'   => $this->contact_address,
             'submission_open'   => $this->submission_open,
             'submission_close'  => $this->submission_close,
             'review_open'       => $this->review_open,
@@ -29,10 +34,15 @@ class ConferenceResource extends JsonResource
             // All translations
             'translations' => $this->whenLoaded('translations'),
 
-            // Media
-            'media' => $this->whenLoaded('media', fn() =>
-                $this->media->mapWithKeys(fn($m) => [$m->type => $m->url])
-            ),
+            // Media: logo/cover as keyed map, gallery as array
+            'media' => $this->whenLoaded('media', fn() => [
+                'logo'    => $this->media->firstWhere('type', 'logo')?->url,
+                'cover'   => $this->media->firstWhere('type', 'cover')?->url,
+                'gallery' => $this->media->where('type', 'gallery')->values()->map(fn($m) => [
+                    'id'  => $m->id,
+                    'url' => $m->url,
+                ]),
+            ]),
 
             // Dates with all translations
             'dates' => $this->whenLoaded('dates', fn() =>

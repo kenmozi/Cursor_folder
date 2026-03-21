@@ -57,9 +57,17 @@ Route::middleware('auth.api')->group(function () {
         Route::get('/conferences/{slug}/branding', [AdminConferenceController::class, 'branding'])->name('admin.conferences.branding');
         Route::post('/conferences/{slug}/media', [AdminConferenceController::class, 'uploadMedia'])->name('admin.conferences.media.upload');
         Route::delete('/conferences/{slug}/media/{type}', [AdminConferenceController::class, 'deleteMedia'])->name('admin.conferences.media.delete');
+        Route::post('/conferences/{slug}/gallery', [AdminConferenceController::class, 'uploadGallery'])->name('admin.conferences.gallery.upload');
+        Route::delete('/conferences/{slug}/gallery/{mediaId}', [AdminConferenceController::class, 'deleteGalleryItem'])->name('admin.conferences.gallery.delete');
         Route::get('/conferences/{slug}/dates', [AdminConferenceController::class, 'dates'])->name('admin.conferences.dates');
         Route::put('/conferences/{slug}/dates', [AdminConferenceController::class, 'updateDates'])->name('admin.conferences.dates.update');
+        Route::get('/conferences/{slug}/tracks', [AdminConferenceController::class, 'tracks'])->name('admin.conferences.tracks');
+        Route::post('/conferences/{slug}/tracks', [AdminConferenceController::class, 'storeTrack'])->name('admin.conferences.tracks.store');
+        Route::put('/conferences/{slug}/tracks/{trackId}', [AdminConferenceController::class, 'updateTrack'])->name('admin.conferences.tracks.update');
+        Route::delete('/conferences/{slug}/tracks/{trackId}', [AdminConferenceController::class, 'deleteTrack'])->name('admin.conferences.tracks.delete');
         Route::get('/conferences/{slug}/committee', [AdminConferenceController::class, 'committee'])->name('admin.conferences.committee');
+        Route::post('/conferences/{slug}/committee', [AdminConferenceController::class, 'addCommitteeMember'])->name('admin.conferences.committee.add');
+        Route::delete('/conferences/{slug}/committee/{memberId}', [AdminConferenceController::class, 'deleteCommitteeMember'])->name('admin.conferences.committee.delete');
         Route::get('/conferences/{slug}/submissions', [AdminConferenceController::class, 'submissions'])->name('admin.conferences.submissions');
         Route::get('/conferences/{slug}/submissions/{id}', [AdminConferenceController::class, 'showSubmission'])->name('admin.conferences.submissions.show');
         Route::post('/conferences/{slug}/submissions/{id}/decision', [AdminConferenceController::class, 'recordDecision'])->name('admin.conferences.submissions.decision');

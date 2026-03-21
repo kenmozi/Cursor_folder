@@ -18,8 +18,9 @@ class UpdateConferenceContentRequest extends FormRequest
             'subtitle'     => ['nullable', 'string', 'max:500'],
             'description'  => ['nullable', 'string'],
             'cfp_text'     => ['nullable', 'string'],
-            'venue_text'   => ['nullable', 'string'],
-            'contact_text' => ['nullable', 'string'],
+            'venue_text'             => ['nullable', 'string'],
+            'contact_text'           => ['nullable', 'string'],
+            'publication_guidelines' => ['nullable', 'string'],
         ];
     }
 }

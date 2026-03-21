@@ -47,6 +47,13 @@ class ConferenceController extends Controller
             'owner_id'          => $request->user()->id,
             'status'            => 'draft',
             'blind_mode'        => $data['blind_mode'] ?? 'double',
+            'website_url'       => $data['website_url'] ?? null,
+            'location'          => $data['location'] ?? null,
+            'city'              => $data['city'] ?? null,
+            'contact_name'      => $data['contact_name'] ?? null,
+            'contact_email'     => $data['contact_email'] ?? null,
+            'contact_phone'     => $data['contact_phone'] ?? null,
+            'contact_address'   => $data['contact_address'] ?? null,
             'submission_open'   => $data['submission_open'] ?? null,
             'submission_close'  => $data['submission_close'] ?? null,
             'review_open'       => $data['review_open'] ?? null,
@@ -54,8 +61,6 @@ class ConferenceController extends Controller
             'notification_date' => $data['notification_date'] ?? null,
             'camera_ready_date' => $data['camera_ready_date'] ?? null,
             'timezone'          => $data['timezone'] ?? 'UTC',
-            'website_url'       => $data['website_url'] ?? null,
-            'location'          => $data['location'] ?? null,
         ]);
 
         // Seed the initial English translation
@@ -115,9 +120,14 @@ class ConferenceController extends Controller
             'review_close'      => ['sometimes', 'nullable', 'date'],
             'notification_date' => ['sometimes', 'nullable', 'date'],
             'camera_ready_date' => ['sometimes', 'nullable', 'date'],
-            'timezone'          => ['sometimes', 'string', 'max:64'],
-            'website_url'       => ['sometimes', 'nullable', 'url'],
-            'location'          => ['sometimes', 'nullable', 'string', 'max:255'],
+            'timezone'        => ['sometimes', 'string', 'max:64'],
+            'website_url'     => ['sometimes', 'nullable', 'url'],
+            'location'        => ['sometimes', 'nullable', 'string', 'max:500'],
+            'city'            => ['sometimes', 'nullable', 'string', 'max:200'],
+            'contact_name'    => ['sometimes', 'nullable', 'string', 'max:255'],
+            'contact_email'   => ['sometimes', 'nullable', 'email', 'max:255'],
+            'contact_phone'   => ['sometimes', 'nullable', 'string', 'max:100'],
+            'contact_address' => ['sometimes', 'nullable', 'string', 'max:1000'],
         ]);
 
         $conference->update($data);

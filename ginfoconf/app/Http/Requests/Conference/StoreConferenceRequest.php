@@ -16,6 +16,13 @@ class StoreConferenceRequest extends FormRequest
     {
         return [
             'slug'                  => ['required', 'string', 'max:100', 'unique:conferences,slug', 'regex:/^[a-z0-9\-]+$/'],
+            'city'                  => ['nullable', 'string', 'max:200'],
+            'website_url'           => ['nullable', 'url', 'max:500'],
+            'location'              => ['nullable', 'string', 'max:500'],
+            'contact_name'          => ['nullable', 'string', 'max:255'],
+            'contact_email'         => ['nullable', 'email', 'max:255'],
+            'contact_phone'         => ['nullable', 'string', 'max:100'],
+            'contact_address'       => ['nullable', 'string', 'max:1000'],
             'acronym'               => ['nullable', 'string', 'max:50'],
             'edition'               => ['nullable', 'string', 'max:50'],
             'timezone'              => ['nullable', 'string', 'max:50'],
