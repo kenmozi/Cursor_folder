@@ -49,8 +49,8 @@ class ConferenceResource extends JsonResource
                 $this->tracks->map(fn($track) => [
                     'id'           => $track->id,
                     'slug'         => $track->slug,
-                    'translations' => $track->whenLoaded('translations'),
-                    'topics'       => $track->whenLoaded('topics'),
+                    'translations' => $track->relationLoaded('translations') ? $track->translations : null,
+                    'topics'       => $track->relationLoaded('topics') ? $track->topics : null,
                 ])
             ),
 
